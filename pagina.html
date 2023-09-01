@@ -5,92 +5,69 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Criador de Monstrinhos</title>
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f3f3f3;
-        }
-
-        #container {
-            width: 300px;
-            margin: 0 auto;
-            background-color: #fff;
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2);
-        }
-
-        h1 {
-            text-align: center;
-            font-size: 24px;
-            color: #333;
-        }
-
-        label {
-            font-size: 16px;
-            display: block;
-            margin-bottom: 8px;
-            color: #555;
-        }
-
-        select {
-            width: 100%;
-            padding: 10px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            font-size: 14px;
-            margin-bottom: 15px;
-        }
-
-        button {
-            background-color: #007bff;
-            color: #fff;
-            border: none;
-            padding: 10px 20px;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 16px;
-            transition: background-color 0.3s;
-        }
-
-        button:hover {
-            background-color: #0056b3;
-        }
+        /* Estilos CSS aqui... */
     </style>
 </head>
 <body>
     <div id="container">
         <h1>Criador de Monstrinhos</h1>
-        <form action="/criar_monstrinho" method="POST"> <!-- Adicione a rota aqui -->
-            <label for="tipo">Tipo de Monstrinho:</label>
-            <select id="tipo" name="tipo">
-                <option value="monstrinho1">Monstrinho 1</option>
-                <option value="monstrinho2">Monstrinho 2</option>
-                <option value="monstrinho3">Monstrinho 3</option>
-            </select>
-
-            <label for="olho">Olho do Monstrinho:</label>
-            <select id="olho" name="olho">
-                <option value="olho1">Olho 1</option>
-                <option value="olho2">Olho 2</option>
-                <option value="olho3">Olho 3</option>
-            </select>
-
-            <label for="boca">Boca do Monstrinho:</label>
-            <select id="boca" name="boca">
-                <option value="boca1">Boca 1</option>
-                <option value="boca2">Boca 2</option>
-                <option value="boca3">Boca 3</option>
-            </select>
-
-            <label for="acessorio">Acessório do Monstrinho:</label>
-            <select id="acessorio" name="acessorio">
-                <option value="acessorio1">Acessório 1</option>
-                <option value="acessorio2">Acessório 2</option>
-                <option value="acessorio3">Acessório 3</option>
-            </select>
-
+        <form id="monstrinho-form">
+            <!-- Campos do formulário aqui... -->
             <button type="submit">Criar Monstrinho</button>
         </form>
     </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            // Adicione um evento de envio de formulário ao formulário
+            document.getElementById("monstrinho-form").addEventListener("submit", async function(event) {
+                event.preventDefault(); // Evita que o formulário seja enviado normalmente
+
+                // Obtenha os valores dos campos do formulário
+                const tipo = document.getElementById("tipo").value;
+                const olho = document.getElementById("olho").value;
+                const boca = document.getElementById("boca").value;
+                const acessorio = document.getElementById("acessorio").value;
+
+                // Crie uma string com as informações do monstrinho
+                const monstrinhoInfo = `Tipo: ${tipo}, Olho: ${olho}, Boca: ${boca}, Acessório: ${acessorio}\n`;
+
+                // Autenticação usando um token de acesso pessoal do GitHub
+                const accessToken = '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';
+
+                // Crie um Gist com as informações do monstrinho
+                const gist = {
+                    description: 'Monstrinho Info',
+                    public: true,
+                    files: {
+                        'monstro.txt': {
+                            content: monstrinhoInfo
+                        }
+                    }
+                };
+
+                const response = await fetch('https://api.github.com/gists', {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `token ${accessToken}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(gist)
+                });
+
+                if (response.ok) {
+                    alert('Monstrinho criado com sucesso no Gist!');
+                } else {
+                    alert('Erro ao criar o monstrinho no Gist.');
+                }
+
+                // Limpe os campos do formulário
+                document.getElementById("tipo").value = "";
+                document.getElementById("olho").value = "";
+                document.getElementById("boca").value = "";
+                document.getElementById("acessorio").value = "";
+            });
+        });
+    </script>
 </body>
 </html>
